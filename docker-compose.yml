@@ -13,13 +13,15 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASS=${DB_PASS}
-    command: ["poetry", "run", "gunicorn", "myproject.wsgi:application", "--workers", "3", "--bind", "0.0.0.0:8000"]
+
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
+
     depends_on:
       - database
 
   database:
     image: postgres:14.6-alpine
-    restart: always  # Рекомендуется добавить для автоматического перезапуска
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
@@ -29,14 +31,18 @@ services:
 
   redis:
     image: redis:7.0.5-alpine
-    restart: always  # То же самое для Redis
+    hostname: redis
 
   worker:
     build:
       context: .
-    command: ["poetry", "run", "celery", "-A", "celery_app.app", "worker", "--loglevel=info"]
+    hostname: worker
+    entrypoint: celery
+    command: -A core.celery_app worker --loglevel=info
     volumes:
       - .:/app
+    links:
+      - redis
     depends_on:
       - redis
       - database
@@ -49,9 +55,13 @@ services:
   flower:
     build:
       context: .
-    command: ["poetry", "run", "celery", "-A", "celery_app.app", "flower"]
+    hostname: flower
+    entrypoint: celery
+    command: -A core.celery_app flower
     volumes:
       - .:/app
+    links:
+      - redis
     depends_on:
       - redis
     ports:

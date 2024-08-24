@@ -1,18 +1,31 @@
-FROM python:3.9-alpine3.16
+FROM python:3.11-alpine3.20
 
+# Копируем файл requirements.txt в временную директорию
+COPY requirements.txt /temp/requirements.txt
+
+# Копируем код проекта в директорию /app
 COPY . /app
 
+# Устанавливаем рабочую директорию
 WORKDIR /app
 
-RUN pip install poetry
+# Открываем порт 8000 для доступа к приложению
+EXPOSE 8000
 
-RUN poetry install
-
+# Устанавливаем необходимые пакеты
 RUN apk add postgresql-client build-base postgresql-dev
 
-RUN adduser -D event-user
+# Обновляем pip
+RUN python -m pip install --upgrade pip
 
-USER event-user
+# Устанавливаем зависимости из файла requirements.txt
+RUN pip install -r /temp/requirements.txt
+
+# Создаем пользователя для запуска приложения
+RUN adduser -D app-user
+
+# Переключаемся на созданного пользователя
+USER app-user
 
 # Запускаем приложение
-CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

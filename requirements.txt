@@ -1,0 +1,6 @@
+django==4.2.15
+celery[redis]==5.2.7
+psycopg2-binary==2.9.9
+flower==2.0.1
+gunicorn==23.0.0
+python-dotenv==1.0.1
