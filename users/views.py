@@ -46,12 +46,9 @@ class LoginCustomUserView(SuccessMessageMixin, LoginView):
 
             if user:
                 login(request, user)
-                return redirect("home")
+                return redirect("list_event")
             else:
                 messages.error(request, "Неверные учетные данные.")
 
         return render(request, self.template_name, {"form": form})
 
-
-def home(request):
-    return render(request, "users/home.html")
