@@ -1,0 +1,65 @@
+{% extends "users/base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/events.css' %}">
+{% endblock css %}
+
+{% block content %}
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <a class="navbar-brand mx-2" href="/">{{ title }}</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbar">
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+        <a class="nav-link" href="/">{{ user.email }}</a>
+        </li>
+    </ul>
+    </div>
+</nav>
+
+<div class="container-fluid">
+  <div class="row">
+<main class="col-md-12 ml-sm-auto">
+      <div class="p-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <h1>{{ title }}</h1>
+        <ul class="list-group mb-3">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Название</th>
+                    <th scope="col">Дата</th>
+                    <th scope="col">Локация</th>
+                    <th scope="col">Статус</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for event in events %}
+                  <tr>
+                    <td>{{ event.title }}</td>
+                    <td>{{ event.date }}</td>
+                    <td>{{ event.location }}</td>
+                    <td>{{ event.status }}</td>
+                  </tr>
+                  {% endfor %}
+              </table>
+        </ul>
+        <form>
+          <div class="input-group">
+            <button type="submit" class="btn btn-success">Скачать</button>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+    </main>
+  </div>
+</div>
+
+{% endblock content %}
